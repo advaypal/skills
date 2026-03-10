@@ -3,12 +3,24 @@ name: linkedin-feed
 description: Check the user's LinkedIn home feed and surface the most important and technically relevant posts. Use when the user asks to check their LinkedIn, see what's trending on LinkedIn, or wants a LinkedIn feed summary.
 argument-hint: [number of scrolls (optional, defaults to 3)]
 user-invocable: true
-allowed-tools: mcp__playwright__browser_navigate, mcp__playwright__browser_snapshot, mcp__playwright__browser_click, mcp__playwright__browser_wait_for, mcp__playwright__browser_press_key, mcp__playwright__browser_take_screenshot, mcp__playwright__browser_evaluate
+allowed-tools: mcp__playwright__browser_navigate, mcp__playwright__browser_snapshot, mcp__playwright__browser_click, mcp__playwright__browser_wait_for, mcp__playwright__browser_press_key, mcp__playwright__browser_take_screenshot, mcp__playwright__browser_evaluate, AskUserQuestion
 ---
 
 # LinkedIn Feed Reader
 
 Read the user's LinkedIn home feed and summarize the most important posts, with a focus on technical content.
+
+## /etc/hosts Setup
+
+LinkedIn is blocked in `/etc/hosts`. Before navigating, ask the user to run the unblock command, then wait for them to confirm before proceeding. After the skill is done, ask them to run the restore command.
+
+1. **Before starting**: Tell the user to run: `sudo sed -i '' '/^127.0.0.1 www.linkedin.com/s/^/#/' /etc/hosts && dscacheutil -flushcache`
+   Wait for the user to confirm they've run it before proceeding.
+2. **After finishing** (even if errors occur): Tell the user to run: `sudo sed -i '' '/^#127.0.0.1 www.linkedin.com/s/^#//' /etc/hosts`
+
+## Browser Sharing Warning
+
+Do NOT run this skill in parallel with other browser-based skills (e.g., twitter-feed). They share the same Playwright browser instance and will steal focus from each other, causing both to fail. Run them sequentially.
 
 ## Steps
 

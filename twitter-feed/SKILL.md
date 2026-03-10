@@ -3,12 +3,24 @@ name: twitter-feed
 description: Check the user's Twitter/X home feed and surface the most important and technically relevant tweets. Use when the user asks to check their Twitter, see what's trending, or wants a feed summary.
 argument-hint: [username (optional, defaults to advaypal)]
 user-invocable: true
-allowed-tools: mcp__playwright__browser_navigate, mcp__playwright__browser_snapshot, mcp__playwright__browser_click, mcp__playwright__browser_wait_for, mcp__playwright__browser_press_key, mcp__playwright__browser_take_screenshot, mcp__playwright__browser_evaluate
+allowed-tools: mcp__playwright__browser_navigate, mcp__playwright__browser_snapshot, mcp__playwright__browser_click, mcp__playwright__browser_wait_for, mcp__playwright__browser_press_key, mcp__playwright__browser_take_screenshot, mcp__playwright__browser_evaluate, AskUserQuestion, Bash
 ---
 
 # Twitter/X Feed Reader
 
 Read the user's Twitter/X home feed and summarize the most important tweets, with a focus on technical content.
+
+## /etc/hosts Setup
+
+Twitter/X is blocked in `/etc/hosts`. Before navigating, ask the user to run the unblock command, then wait for them to confirm before proceeding. After the skill is done, ask them to run the restore command.
+
+1. **Before starting**: Tell the user to run: `sudo sed -i '' -e '/^127.0.0.1 x.com/s/^/#/' -e '/^127.0.0.1 twitter.com/s/^/#/' /etc/hosts && dscacheutil -flushcache`
+   Wait for the user to confirm they've run it before proceeding.
+2. **After finishing** (even if errors occur): Tell the user to run: `sudo sed -i '' -e '/^#127.0.0.1 x.com/s/^#//' -e '/^#127.0.0.1 twitter.com/s/^#//' /etc/hosts`
+
+## Browser Sharing Warning
+
+Do NOT run this skill in parallel with other browser-based skills (e.g., linkedin-feed). They share the same Playwright browser instance and will steal focus from each other, causing both to fail. Run them sequentially.
 
 ## Steps
 
